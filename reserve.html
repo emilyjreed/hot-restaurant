@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <title>Tables Page</title>
 
+    <script src="https://code.jquery.com/jquery.js"></script>
+
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
 
@@ -22,9 +24,9 @@
         <div class="col s12 m8 offset-m2">
             <div class="card center blue-grey lighten-5">
                 <div class="card-content">
-                    <h1 class="card-title">
-                        <i class="material-icons medium">cake</i>
-                        <h1> Hot Restaurant</h1>
+                    <span class="card-title">
+                        <h1 class="center">
+                            <i class="material-icons medium">cake</i>Hot Restaurant</h1>
                         <h4>Make your reservation</h4>
                 </div>
                 <div class="card-action">
@@ -72,7 +74,7 @@
                                 </div>
                             </div>
 
-                            <a class="waves-effect waves-light btn-large blue" id="submit">Submit</a>
+                            <a class="waves-effect waves-light btn-large blue submit">Submit</a>
 
                         </form>
                     </div>
@@ -93,40 +95,37 @@
 
 </body>
 
+</html>
+
 <script type="text/javascript">
 
-    $("#submit").on("click", function (event) {
+    $(".submit").on("click", function (event) {
         event.preventDefault();
-        var newTable = {
-            name: $('#name').val().trim(),
-            phoneNumber: $('#phone').val().trim(),
-            email: $('#email').val().trim()
+
+        var newReservation = {
+            name: $("#name").val().trim(),
+            phone: $("#phone").val().trim(),
+            email: $("#email").val().trim()
         };
 
-        var currentURL = window.location.origin;
+        console.log(newReservation);
 
-        $.post(currentURL + "/api/tables", newTable,
+        $.post("/api/tables", newReservation,
             function (data) {
-                
-                if (data == true) {
-                    alert("Your table has been reserved")
+
+                if (data) {
+                    alert("Your table has been reserved");
+                }
+                else {
+                    alert("You have been put on the waitlist");
                 }
 
-                if (data == false) {
-                    alert("You have been added to the waitlist")
-                }
-
-                $('#reserve_name').val("");
-                $('#reserve_phone').val("");
-                $('#reserve_email').val("");
-                $('#reserve_uniqueID').val("");
+                $("#name").val("");
+                $("#phone").val("");
+                $("#email").val("");
 
             });
-
-        return false;
 
     });
 
 </script>
-
-</html>

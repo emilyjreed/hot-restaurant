@@ -1,73 +1,76 @@
-var express = require("express");
-var bodyParser = require("body-parser");
-var path = require("path");
+var express = require('express');
+var bodyParser = require('body-parser');
+var path = require('path');
 
-var app = express();
-var PORT = 3000;
+var app = express(); 
+var PORT = process.env.PORT || 80; 
 
-app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.text());
+app.use(bodyParser.json({type:'application/vnd.api+json'}));
 
-var tables = [
-    {
-        routeName: "emily",
-        name: "Emily",
-        phoneNumber: 5193246725,
-        email: "emily@gmail.com"
-    },
-    {
-        routeName: "allison",
-        name: "Allison",
-        phoneNumber: 6790245762,
-        email: "allison@gmail.com"
-    },
-    {
-        routeName: "travis",
-        name: "Travis",
-        phoneNumber: 2104694829,
-        email: "travis@gmail.com"
-    }
+
+var tableData = [
+	{
+		name: "Bob",
+		email: "bob@gmail.com",
+		number: "919-111-4567",
+
+	}
 ];
 
-app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname, "index.html"));
+
+var waitListData = [
+	{
+		name: "Someone",
+		email: "Someone@gmail.com",
+		phone: "919-123-4567"
+	}
+];
+
+
+app.get('/tables', function(req, res){
+    res.sendFile(path.join(__dirname, 'tables.html'));
 });
 
-app.get("/add", function(req, res) {
-    res.sendFile(path.join(__dirname, "reserve.html"));
+app.get('/reserve', function(req, res){
+    res.sendFile(path.join(__dirname, 'reserve.html'));
 });
 
-// Displays all tables
-app.get("/tables", function(req,res) {
-    return res.json(tables);
+app.get("/", function(req, res){
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-app.get("/tables/:table", function(req, res) {
-    var chosen = req.params.table;
 
-    console.log(chosen);
+app.get('/api/tables', function(req, res){
+   return res.json(tableData);
+});
 
-    for (var i = 0; i < tables.length; i++) {
-        if (chosen === tables[i].routeName) {
-            return res.json(tables[i]);
-        }
+app.get('/api/waitlist', function(req, res){
+   return res.json(waitListData);
+});
+
+app.post('/api/tables', function(req, res){
+    if(tableData.length < 5 ){
+        tableData.push(req.body);
+        res.json(true); 
+    }
+    
+    else{
+        waitListData.push(req.body);
+        res.json(false); 
     }
 
-    return res.json(false);
 });
 
-// Create New Tables
-app.post("/api/tables", function(req, res) {
-    var newTable = req.body;
+app.post('/api/clear', function(req, res){
+    tableData = [];
+    waitListData = [];
+    console.log(tableData);
+})
 
-    newTable.routeName = newTable.name.replace(/\s+/g, "").toLowerCase();
-
-    console.log(newTable);
-
-    tables.push(newTable);
-    res.json(newTables);
-});
 
 app.listen(PORT, function() {
-    console.log("listening on PORT " + PORT);
+	console.log("App listening on PORT: " + PORT);
 });

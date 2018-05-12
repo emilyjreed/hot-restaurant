@@ -38,11 +38,11 @@ app.get("/add", function(req, res) {
 });
 
 // Displays all tables
-app.get("/api/tables", function(req,res) {
+app.get("/tables", function(req,res) {
     return res.json(tables);
 });
 
-app.get("/api/tables/:table", function(req, res) {
+app.get("/tables/:table", function(req, res) {
     var chosen = req.params.table;
 
     console.log(chosen);
